@@ -1,14 +1,11 @@
 const pool = require('../../database/postgres/pool')
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper')
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
+const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper')
 const container = require('../../container')
 const createServer = require('../createServer')
 
 describe('/threads endpoint', () => {
-    beforeEach(async () => {
-        await UsersTableTestHelper.addUser({})
-    })
-
     afterAll(async () => {
         await pool.end()
     })
@@ -16,24 +13,48 @@ describe('/threads endpoint', () => {
     afterEach(async () => {
         await ThreadsTableTestHelper.cleanTable()
         await UsersTableTestHelper.cleanTable()
+        await AuthenticationsTableTestHelper.cleanTable()
     })
 
     describe('when POST /threads', () => {
         it('should response 201 and persisted thread', async () => {
             // Arrange
-            const requestPayload = {
-                title: 'dicoding thread',
-                body: 'ini body dari threadnya',
-                owner: 'user-123'
+            const payload = {
+                title: 'title 1',
+                body: 'body 1'
             }
-            // eslint-disable-next-line no-undef
+            const userPayload = {
+                username: 'dicoding',
+                password: 'secret'
+            }
             const server = await createServer(container)
+
+            // Add user
+            await server.inject({
+                method: 'POST',
+                url: '/users',
+                payload: {
+                    username: 'dicoding',
+                    password: 'secret',
+                    fullname: 'Dicoding Indonesia'
+                }
+            })
+            // Login
+            const getAuth = await server.inject({
+                method: 'POST',
+                url: '/authentications',
+                payload: userPayload
+            })
+            const { accessToken } = getAuth.result.data
 
             // Action
             const response = await server.inject({
-                method: 'POST',
                 url: '/threads',
-                payload: requestPayload
+                method: 'POST',
+                payload,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             })
 
             // Assert
@@ -41,21 +62,48 @@ describe('/threads endpoint', () => {
             expect(response.statusCode).toEqual(201)
             expect(responseJson.status).toEqual('success')
             expect(responseJson.data.addedThread).toBeDefined()
+            expect(responseJson.data.addedThread.title).toEqual(payload.title)
         })
 
         it('should response 400 when request payload not contain needed property', async () => {
             // Arrange
             const requestPayload = {
-                title: 'dicoding thread',
                 body: 'ini body dari threadnya'
             }
+
+            const userPayload = {
+                username: 'dicoding',
+                password: 'secret'
+            }
+
             const server = await createServer(container)
+
+            // Add user
+            await server.inject({
+                method: 'POST',
+                url: '/users',
+                payload: {
+                    username: 'dicoding',
+                    password: 'secret',
+                    fullname: 'Dicoding Indonesia'
+                }
+            })
+            // Login
+            const getAuth = await server.inject({
+                method: 'POST',
+                url: '/authentications',
+                payload: userPayload
+            })
+            const { accessToken } = getAuth.result.data
 
             // Action
             const response = await server.inject({
                 method: 'POST',
                 url: '/threads',
-                payload: requestPayload
+                payload: requestPayload,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             })
 
             // Assert
@@ -72,13 +120,39 @@ describe('/threads endpoint', () => {
                 body: true,
                 owner: 'user-123'
             }
+            const userPayload = {
+                username: 'dicoding',
+                password: 'secret'
+            }
+
             const server = await createServer(container)
+
+            // Add user
+            await server.inject({
+                method: 'POST',
+                url: '/users',
+                payload: {
+                    username: 'dicoding',
+                    password: 'secret',
+                    fullname: 'Dicoding Indonesia'
+                }
+            })
+            // Login
+            const getAuth = await server.inject({
+                method: 'POST',
+                url: '/authentications',
+                payload: userPayload
+            })
+            const { accessToken } = getAuth.result.data
 
             // Action
             const response = await server.inject({
                 method: 'POST',
                 url: '/threads',
-                payload: requestPayload
+                payload: requestPayload,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             })
 
             // Assert
@@ -95,13 +169,39 @@ describe('/threads endpoint', () => {
                 body: 'ini body thread',
                 owner: 'user-123'
             }
+            const userPayload = {
+                username: 'dicoding',
+                password: 'secret'
+            }
+
             const server = await createServer(container)
+
+            // Add user
+            await server.inject({
+                method: 'POST',
+                url: '/users',
+                payload: {
+                    username: 'dicoding',
+                    password: 'secret',
+                    fullname: 'Dicoding Indonesia'
+                }
+            })
+            // Login
+            const getAuth = await server.inject({
+                method: 'POST',
+                url: '/authentications',
+                payload: userPayload
+            })
+            const { accessToken } = getAuth.result.data
 
             // Action
             const response = await server.inject({
                 method: 'POST',
                 url: '/threads',
-                payload: requestPayload
+                payload: requestPayload,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             })
 
             // Assert
