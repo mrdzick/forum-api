@@ -1,4 +1,4 @@
-const AddComment = require('../addComment')
+const AddComment = require('../AddComment')
 
 describe('an addComment entities', () => {
     it('should to throw error when payload did not contain needed property', () => {
@@ -12,7 +12,9 @@ describe('an addComment entities', () => {
     it('should to throw error when payload did not meet data type spesification', () => {
         // Arrange
         const payload = {
-            content: true
+            content: true,
+            owner: 123,
+            thread: 'thread-123'
         }
 
         // Action and Assert
@@ -21,11 +23,15 @@ describe('an addComment entities', () => {
 
     it('should create addComment object correctly', () => {
         const payload = {
-            content: 'ini isi komentar'
+            content: 'ini isi komentar',
+            owner: 'user-123',
+            thread: 'thread-123'
         }
 
-        const { content } = new AddComment(payload)
+        const { content, owner, thread } = new AddComment(payload)
 
         expect(content).toEqual(payload.content)
+        expect(owner).toEqual(payload.owner)
+        expect(thread).toEqual(payload.thread)
     })
 })
