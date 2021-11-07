@@ -9,6 +9,7 @@ const CommentRepositoryPostgres = require('../CommentRepositoryPostgres')
 describe('CommentRepositoryPostgres', () => {
     beforeAll(async () => {
         await UsersTableTestHelper.addUser({})
+        await ThreadsTableTestHelper.addThread({})
     })
 
     afterEach(async () => {
@@ -16,6 +17,7 @@ describe('CommentRepositoryPostgres', () => {
     })
 
     afterAll(async () => {
+        await ThreadsTableTestHelper.cleanTable()
         await UsersTableTestHelper.cleanTable()
         await pool.end()
     })
@@ -40,26 +42,26 @@ describe('CommentRepositoryPostgres', () => {
             expect(comments).toHaveLength(1)
         })
 
-        // it('should return added comment correctly', async () => {
-        //     // Arrange
-        //     const comment = new AddComment({
-        //         content: 'ini isi komentar',
-        //         owner: 'user-123',
-        //         thread: 'thread-123'
-        //     })
+        it('should return added comment correctly', async () => {
+            // Arrange
+            const comment = new AddComment({
+                content: 'ini isi komentar',
+                owner: 'user-123',
+                thread: 'thread-123'
+            })
 
-        //     const fakeIdGenerator = () => '123' // Stub
-        //     const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator)
+            const fakeIdGenerator = () => '123' // Stub
+            const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, fakeIdGenerator)
 
-        //     // Action
-        //     const addedComment = await commentRepositoryPostgres.addComment(comment)
+            // Action
+            const addedComment = await commentRepositoryPostgres.addComment(comment)
 
-        //     // Assert
-        //     expect(addedComment).toStrictEqual(new AddedComment({
-        //         id: 'comment-123',
-        //         content: comment.content,
-        //         owner: comment.owner
-        //     }))
-        // })
+            // Assert
+            expect(addedComment).toStrictEqual(new AddedComment({
+                id: 'comment-123',
+                content: comment.content,
+                owner: comment.owner
+            }))
+        })
     })
 })
