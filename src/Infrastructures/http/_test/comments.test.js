@@ -7,19 +7,19 @@ const container = require('../../container')
 const createServer = require('../createServer')
 
 describe('/threads/threadId/comments endpoint', () => {
-    describe('when POST /threads/threadId/comments', () => {
-        beforeAll(async () => {
-            await UsersTableTestHelper.addUser({})
-        })
-        afterEach(async () => {
-            await CommentsTableTestHelper.cleanTable()
-            await ThreadsTableTestHelper.cleanTable()
-        })
+    beforeAll(async () => {
+        await UsersTableTestHelper.addUser({})
+    })
+    afterEach(async () => {
+        await CommentsTableTestHelper.cleanTable()
+        await ThreadsTableTestHelper.cleanTable()
+    })
 
-        afterAll(async () => {
-            await UsersTableTestHelper.cleanTable()
-            await pool.end()
-        })
+    afterAll(async () => {
+        await UsersTableTestHelper.cleanTable()
+        await pool.end()
+    })
+    describe('when POST /threads/threadId/comments', () => {
         it('should response 201 and persisted comment', async () => {
             // Arrange
             const payload = {
@@ -98,6 +98,34 @@ describe('/threads/threadId/comments endpoint', () => {
             const responseJson = JSON.parse(response.payload)
             expect(response.statusCode).toEqual(400)
             expect(responseJson.status).toEqual('fail')
+        })
+    })
+
+    describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
+        it('should response 200 when success deleted comment', async () => {
+            // Arrange
+            const commentId = 'comment-123'
+            const threadId = 'thread-123'
+            await ThreadsTableTestHelper.addThread({})
+            await CommentsTableTestHelper.addComment({})
+
+            const server = await createServer(container)
+
+            const accessToken = await ServerTestHelper.getAccessToken()
+
+            // Action
+            const response = await server.inject({
+                method: 'DELETE',
+                url: `/threads/${threadId}/comments/${commentId}`,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(200)
+            expect(responseJson.status).toEqual('success')
         })
     })
 })

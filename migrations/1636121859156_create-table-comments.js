@@ -24,6 +24,10 @@ exports.up = pgm => {
             referencesConstraintName: 'fk_comments_threads',
             onDelete: 'cascade',
             onUpdate: 'cascade'
+        },
+        is_deleted: {
+            type: 'BOOLEAN',
+            default: 'FALSE'
         }
     }, {
         ifNotExists: true

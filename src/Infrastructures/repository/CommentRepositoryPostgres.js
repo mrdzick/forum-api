@@ -1,25 +1,14 @@
 const AddedComment = require('../../Domains/comments/entities/AddedComment')
 const CommentRepository = require('../../Domains/comments/CommentRepository')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
+const InvariantError = require('../../Commons/exceptions/InvariantError')
 
 class CommentRepositoryPostgres extends CommentRepository {
     constructor (pool, idGenerator) {
         super()
         this._pool = pool
         this._idGenerator = idGenerator
-    }
-
-    async verifyAvailableThread (threadId) {
-        const query = {
-            text: 'SELECT id FROM threads WHERE id=$1',
-            values: [threadId]
-        }
-
-        const result = await this._pool.query(query)
-
-        if (!result.rowCount) {
-            throw new NotFoundError('Thread tidak ada!')
-        }
     }
 
     async addComment (comment) {
@@ -34,6 +23,45 @@ class CommentRepositoryPostgres extends CommentRepository {
         const result = await this._pool.query(query)
 
         return new AddedComment({ ...result.rows[0] })
+    }
+
+    async verifyAvailableComment (commentId) {
+        const query = {
+            text: 'SELECT id FROM comments WHERE id=$1 AND is_deleted=FALSE',
+            values: [commentId]
+        }
+
+        const result = await this._pool.query(query)
+
+        if (!result.rowCount) {
+            throw new NotFoundError('Komentar tidak ditemukan!')
+        }
+    }
+
+    async verifyCommentOwner (commentId, owner) {
+        const query = {
+            text: 'SELECT * FROM comments WHERE id=$1 AND owner=$2',
+            values: [commentId, owner]
+        }
+
+        const result = await this._pool.query(query)
+
+        if (!result.rowCount) {
+            throw new AuthorizationError('Komentar ini bukan milik anda!')
+        }
+    }
+
+    async deleteComment (commentId) {
+        const query = {
+            text: 'UPDATE comments SET is_deleted=TRUE WHERE id=$1 RETURNING id, is_deleted',
+            values: [commentId]
+        }
+
+        const result = await this._pool.query(query)
+
+        if (!result.rowCount) {
+            throw new InvariantError('Gagal melakukan penghapusan!')
+        }
     }
 }
 
