@@ -4,7 +4,7 @@ const CommentRepository = require('../../../Domains/comments/CommentRepository')
 const AddCommentUseCase = require('../AddCommentUseCase')
 
 describe('AddCommentUseCase', () => {
-    it('should orcestrating the add comment correctly', async () => {
+    it('should orchestrating the add comment correctly', async () => {
         // Arrange
         const useCasePayload = {
             content: 'ini isi komentar',
@@ -22,6 +22,7 @@ describe('AddCommentUseCase', () => {
         const mockCommentRepository = new CommentRepository()
 
         // mocking needed function
+        mockCommentRepository.verifyAvailableThread = jest.fn().mockImplementation(() => Promise.resolve())
         mockCommentRepository.addComment = jest.fn().mockImplementation(() => Promise.resolve(expectedAddedComment))
 
         // creating use case instance
@@ -34,6 +35,7 @@ describe('AddCommentUseCase', () => {
 
         // Assert
         expect(addedComment).toStrictEqual(expectedAddedComment)
+        expect(mockCommentRepository.verifyAvailableThread).toBeCalledWith(useCasePayload.thread)
         expect(mockCommentRepository.addComment).toBeCalledWith(new AddComment({
             content: useCasePayload.content,
             owner: useCasePayload.owner,

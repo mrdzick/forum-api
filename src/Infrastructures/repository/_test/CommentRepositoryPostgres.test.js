@@ -3,13 +3,13 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper')
 const AddComment = require('../../../Domains/comments/entities/AddComment')
 const AddedComment = require('../../../Domains/comments/entities/AddedComment')
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError')
 const pool = require('../../database/postgres/pool')
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres')
 
 describe('CommentRepositoryPostgres', () => {
     beforeAll(async () => {
         await UsersTableTestHelper.addUser({})
-        await ThreadsTableTestHelper.addThread({})
     })
 
     afterEach(async () => {
@@ -20,6 +20,26 @@ describe('CommentRepositoryPostgres', () => {
         await ThreadsTableTestHelper.cleanTable()
         await UsersTableTestHelper.cleanTable()
         await pool.end()
+    })
+
+    describe('verifyAvailableThread', () => {
+        it('should throw NotFoundError when thread is not available', async () => {
+            // Arrange
+            const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {})
+
+            // Action & Assert
+            expect(commentRepositoryPostgres.verifyAvailableThread('thread-123')).rejects.toThrowError(NotFoundError)
+        })
+
+        it('should not throw error when thread is available', async () => {
+            // Arrange
+            await ThreadsTableTestHelper.addThread({}) // Add Thread //
+
+            const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {})
+
+            // Action & Assert
+            expect(commentRepositoryPostgres.verifyAvailableThread('thread-123')).resolves.not.toThrowError(NotFoundError)
+        })
     })
 
     describe('addComment Function', () => {

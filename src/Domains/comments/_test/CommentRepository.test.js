@@ -5,5 +5,6 @@ describe('CommentRepository Interface', () => {
         const commentRepository = new CommentRepository()
 
         await expect(commentRepository.addComment({})).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')
+        await expect(commentRepository.verifyAvailableThread('')).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     })
 })
