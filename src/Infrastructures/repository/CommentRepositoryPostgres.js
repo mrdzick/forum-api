@@ -63,6 +63,30 @@ class CommentRepositoryPostgres extends CommentRepository {
             throw new InvariantError('Gagal melakukan penghapusan!')
         }
     }
+
+    async getAllCommentsInThread (threadId) {
+        const query = {
+            text: `SELECT comments.id, users.username, comments.date, comments.content, comments.is_deleted FROM comments
+                    LEFT JOIN users ON users.id=comments.owner WHERE comments.thread=$1 ORDER BY comments.date ASC`,
+            values: [threadId]
+        }
+
+        const resultQuery = await this._pool.query(query)
+
+        const result = resultQuery.rows.map((comment) => {
+            if (comment.is_deleted === true) {
+                comment.content = '**komentar telah dihapus**'
+            }
+            return {
+                id: comment.id,
+                username: comment.username,
+                date: comment.date,
+                content: comment.content
+            }
+        })
+
+        return result
+    }
 }
 
 module.exports = CommentRepositoryPostgres

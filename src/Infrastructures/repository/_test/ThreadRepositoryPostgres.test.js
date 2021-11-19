@@ -82,4 +82,28 @@ describe('ThreadRepositoryPostgres', () => {
             }))
         })
     })
+
+    describe('getThreadById function', () => {
+        it('should return thread value correctly', async () => {
+            // Arrange
+            const threadId = 'thread-123'
+            const expectedResult = {
+                id: 'thread-123',
+                title: 'test title thread',
+                body: 'test body thread',
+                username: 'dicoding'
+            }
+            const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {})
+            await ThreadsTableTestHelper.addThread({}) // Add Thread with default value
+
+            // Action
+            const result = await threadRepositoryPostgres.getThreadById(threadId)
+
+            // Assert
+            expect(result.id).toEqual(expectedResult.id)
+            expect(result.title).toEqual(expectedResult.title)
+            expect(result.body).toEqual(expectedResult.body)
+            expect(result.username).toEqual(expectedResult.username)
+        })
+    })
 })

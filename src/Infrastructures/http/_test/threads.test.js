@@ -4,6 +4,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const ServerTestHelper = require('../../../../tests/ServerTestHelper')
 const container = require('../../container')
 const createServer = require('../createServer')
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper')
 
 describe('/threads endpoint', () => {
     beforeAll(async () => {
@@ -131,6 +132,47 @@ describe('/threads endpoint', () => {
             expect(response.statusCode).toEqual(400)
             expect(responseJson.status).toEqual('fail')
             expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena karakter title melebihi batas limit')
+        })
+    })
+
+    describe('when GET /threads/{threadId}', () => {
+        it('should response 200 and show the thread', async () => {
+            // Arrange
+            const threadId = 'thread-123'
+            await ThreadsTableTestHelper.addThread({ id: threadId })
+
+            await CommentsTableTestHelper.addComment({})
+
+            const server = await createServer(container)
+            // Action
+            const response = await server.inject({
+                url: `/threads/${threadId}`,
+                method: 'GET'
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(200)
+            expect(responseJson.status).toEqual('success')
+            expect(responseJson.data.thread).toBeDefined()
+            expect(responseJson.data.thread.comments).toBeDefined()
+        })
+
+        it('should response 404 when request to get thread that are not available', async () => {
+            // Arrange
+            const threadId = 'thread-123'
+
+            const server = await createServer(container)
+            // Action
+            const response = await server.inject({
+                url: `/threads/${threadId}`,
+                method: 'GET'
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(404)
+            expect(responseJson.status).toEqual('fail')
         })
     })
 })

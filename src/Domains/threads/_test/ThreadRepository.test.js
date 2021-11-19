@@ -6,5 +6,6 @@ describe('ThreadRepository Interface', () => {
 
         await expect(threadRepository.addThread({})).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED')
         await expect(threadRepository.verifyAvailableThread('')).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')
+        await expect(threadRepository.getThreadById('')).rejects.toThrowError('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     })
 })

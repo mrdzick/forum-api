@@ -127,4 +127,44 @@ describe('CommentRepositoryPostgres', () => {
             expect(comment).toHaveLength(0)
         })
     })
+
+    describe('getAllCommentsInThread function', () => {
+        it('should return all comments correctly', async () => {
+            // Assert
+            const threadId = 'thread-123'
+            const expectedResult = {
+                id: 'comment-123',
+                username: 'dicoding',
+                content: 'ini adalah isi komentar'
+            }
+            const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {})
+
+            await CommentsTableTestHelper.addComment({}) // add default comment
+
+            // Action
+            const result = await commentRepositoryPostgres.getAllCommentsInThread(threadId)
+
+            // Assert
+            expect(result[0].id).toEqual(expectedResult.id)
+            expect(result[0].username).toEqual(expectedResult.username)
+            expect(result[0].content).toEqual(expectedResult.content)
+            expect(result[0]).toHaveProperty('date')
+        })
+
+        it('should return comments with content=**komentar telah dihapus** when comments has been deleted', async () => {
+            // Arrange
+            const threadId = 'thread-123'
+            const expectedContent = '**komentar telah dihapus**'
+            const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {})
+
+            await CommentsTableTestHelper.addComment({}) // add default comment
+
+            // Action
+            await CommentsTableTestHelper.softDeleteComment('comment-123') // soft delete comment with id comment-123
+            const result = await commentRepositoryPostgres.getAllCommentsInThread(threadId)
+
+            // Assert
+            expect(result[0].content).toEqual(expectedContent)
+        })
+    })
 })

@@ -19,6 +19,10 @@ exports.up = pgm => {
             referencesConstraintName: 'fk_threads_users',
             onDelete: 'cascade',
             onUpdate: 'cascade'
+        },
+        date: {
+            type: 'TIMESTAMP',
+            default: 'NOW()'
         }
     }, {
         ifNotExists: true

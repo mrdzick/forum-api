@@ -28,6 +28,10 @@ exports.up = pgm => {
         is_deleted: {
             type: 'BOOLEAN',
             default: 'FALSE'
+        },
+        date: {
+            type: 'TIMESTAMP',
+            default: 'NOW()'
         }
     }, {
         ifNotExists: true
