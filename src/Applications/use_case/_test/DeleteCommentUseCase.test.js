@@ -36,5 +36,7 @@ describe('DeleteCommentUseCase', () => {
             .toHaveBeenCalledWith(useCasePayload.commentId)
         expect(mockCommentRepository.verifyCommentOwner)
             .toHaveBeenCalledWith(useCasePayload.commentId, useCasePayload.owner)
+        expect(mockCommentRepository.deleteComment)
+            .toHaveBeenCalledWith(useCasePayload.commentId)
     })
 })

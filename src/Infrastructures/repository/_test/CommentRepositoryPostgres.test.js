@@ -150,21 +150,5 @@ describe('CommentRepositoryPostgres', () => {
             expect(result[0].content).toEqual(expectedResult.content)
             expect(result[0]).toHaveProperty('date')
         })
-
-        it('should return comments with content=**komentar telah dihapus** when comments has been deleted', async () => {
-            // Arrange
-            const threadId = 'thread-123'
-            const expectedContent = '**komentar telah dihapus**'
-            const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {})
-
-            await CommentsTableTestHelper.addComment({}) // add default comment
-
-            // Action
-            await CommentsTableTestHelper.softDeleteComment('comment-123') // soft delete comment with id comment-123
-            const result = await commentRepositoryPostgres.getAllCommentsInThread(threadId)
-
-            // Assert
-            expect(result[0].content).toEqual(expectedContent)
-        })
     })
 })

@@ -2,7 +2,6 @@ const AddedComment = require('../../Domains/comments/entities/AddedComment')
 const CommentRepository = require('../../Domains/comments/CommentRepository')
 const NotFoundError = require('../../Commons/exceptions/NotFoundError')
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError')
-const InvariantError = require('../../Commons/exceptions/InvariantError')
 
 class CommentRepositoryPostgres extends CommentRepository {
     constructor (pool, idGenerator) {
@@ -57,11 +56,7 @@ class CommentRepositoryPostgres extends CommentRepository {
             values: [commentId]
         }
 
-        const result = await this._pool.query(query)
-
-        if (!result.rowCount) {
-            throw new InvariantError('Gagal melakukan penghapusan!')
-        }
+        await this._pool.query(query)
     }
 
     async getAllCommentsInThread (threadId) {
@@ -71,21 +66,9 @@ class CommentRepositoryPostgres extends CommentRepository {
             values: [threadId]
         }
 
-        const resultQuery = await this._pool.query(query)
+        const result = await this._pool.query(query)
 
-        const result = resultQuery.rows.map((comment) => {
-            if (comment.is_deleted === true) {
-                comment.content = '**komentar telah dihapus**'
-            }
-            return {
-                id: comment.id,
-                username: comment.username,
-                date: comment.date,
-                content: comment.content
-            }
-        })
-
-        return result
+        return result.rows
     }
 }
 
