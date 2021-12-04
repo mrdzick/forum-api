@@ -21,7 +21,9 @@ DomainErrorTranslator._directories = {
     'ADD_THREAD.DATA_TYPES_OF_PAYLOAD_IS_NOT_VALID': new InvariantError('tidak dapat membuat thread baru karena tipe data tidak sesuai'),
     'ADD_THREAD.TITLE_LIMIT_CHAR': new InvariantError('tidak dapat membuat thread baru karena karakter title melebihi batas limit'),
     'ADD_COMMENT.NOT_CONTAIN_NEEDED_PROPERY': new InvariantError('tidak dapat membuat komentar baru karena properti yang dibutuhkan tidak ada'),
-    'ADD_COMMENT.DATA_TYPES_OF_PAYLOAD_IS_NOT_VALID': new InvariantError('tidak dapat membuat thread baru karena tipe data tidak sesuai')
+    'ADD_COMMENT.DATA_TYPES_OF_PAYLOAD_IS_NOT_VALID': new InvariantError('tidak dapat membuat thread baru karena tipe data tidak sesuai'),
+    'ADD_REPLY.NOT_CONTAIN_NEEDED_PROPERY': new InvariantError('tidak dapat membuat balasan pada komentar karena properti yang dibutuhkan tidak ada'),
+    'ADD_REPLY.DATA_TYPES_OF_PAYLOAD_IS_NOT_VALID': new InvariantError('tidak dapat membuat balasan pada komentar karena tipe data tidak sesuai')
 }
 
 module.exports = DomainErrorTranslator
