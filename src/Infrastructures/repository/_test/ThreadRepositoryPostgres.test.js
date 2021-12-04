@@ -103,6 +103,7 @@ describe('ThreadRepositoryPostgres', () => {
             expect(result.id).toEqual(expectedResult.id)
             expect(result.title).toEqual(expectedResult.title)
             expect(result.body).toEqual(expectedResult.body)
+            expect(result).toHaveProperty('date')
             expect(result.username).toEqual(expectedResult.username)
         })
     })

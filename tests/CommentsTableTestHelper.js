@@ -22,15 +22,6 @@ const CommentsTableTestHelper = {
         return result.rows
     },
 
-    async softDeleteComment (commentId) {
-        const query = {
-            text: 'UPDATE comments SET is_deleted=TRUE WHERE id=$1',
-            values: [commentId]
-        }
-
-        await pool.query(query)
-    },
-
     async cleanTable () {
         await pool.query('DELETE FROM comments WHERE 1=1')
     }

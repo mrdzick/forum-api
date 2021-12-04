@@ -10,7 +10,7 @@ class GetThreadUseCase {
         const thread = await this._threadRepository.getThreadById(threadId)
         const comments = await this._commentRepository.getAllCommentsInThread(threadId)
 
-        const formatedComments = comments.map((comment) => {
+        thread.comments = comments.map((comment) => {
             if (comment.is_deleted === true) {
                 comment.content = '**komentar telah dihapus**'
             }
@@ -21,8 +21,6 @@ class GetThreadUseCase {
                 content: comment.content
             }
         })
-
-        thread.comments = formatedComments
 
         return thread
     }
