@@ -1,11 +1,11 @@
-const AddReply = require('../../../Domains/comment-replies/entities/AddReply')
-const AddedReply = require('../../../Domains/comment-replies/entities/AddedReply')
+const AddReply = require('../../../Domains/replies/entities/AddReply')
+const AddedReply = require('../../../Domains/replies/entities/AddedReply')
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository')
 const CommentRepository = require('../../../Domains/comments/CommentRepository')
-const CommentRepliesRepository = require('../../../Domains/comment-replies/CommentRepliesRepository')
-const AddCommentReplyUseCase = require('../AddCommentReplyUseCase')
+const ReplyRepository = require('../../../Domains/replies/ReplyRepository')
+const AddReplyUseCase = require('../AddReplyUseCase')
 
-describe('AddCommentReplyUseCase', () => {
+describe('AddReplyUseCase', () => {
     it('should orchestrating the add reply correctly', async () => {
         // Arrange
         const useCasePayload = {
@@ -24,18 +24,18 @@ describe('AddCommentReplyUseCase', () => {
         // creating dependency of use case
         const mockThreadRepository = new ThreadRepository()
         const mockCommentRepository = new CommentRepository()
-        const mockCommentRepliesRepository = new CommentRepliesRepository()
+        const mockReplyRepository = new ReplyRepository()
 
         // mocking needed function
         mockThreadRepository.verifyAvailableThread = jest.fn().mockImplementation(() => Promise.resolve())
         mockCommentRepository.verifyAvailableComment = jest.fn().mockImplementation(() => Promise.resolve())
-        mockCommentRepliesRepository.addReply = jest.fn().mockImplementation(() => Promise.resolve(expectedAddedReply))
+        mockReplyRepository.addReply = jest.fn().mockImplementation(() => Promise.resolve(expectedAddedReply))
 
         // creating use case instance
-        const getCommentReplyUseCase = new AddCommentReplyUseCase({
+        const getCommentReplyUseCase = new AddReplyUseCase({
             threadRepository: mockThreadRepository,
             commentRepository: mockCommentRepository,
-            commentRepliesRepository: mockCommentRepliesRepository
+            replyRepository: mockReplyRepository
         })
 
         // Action
@@ -45,7 +45,7 @@ describe('AddCommentReplyUseCase', () => {
         expect(addedReply).toStrictEqual(expectedAddedReply)
         expect(mockThreadRepository.verifyAvailableThread).toBeCalledWith(useCasePayload.thread)
         expect(mockCommentRepository.verifyAvailableComment).toBeCalledWith(useCasePayload.comment)
-        expect(mockCommentRepliesRepository.addReply).toBeCalledWith(new AddReply({
+        expect(mockReplyRepository.addReply).toBeCalledWith(new AddReply({
             content: useCasePayload.content,
             owner: useCasePayload.owner,
             comment: useCasePayload.comment,

@@ -3,7 +3,7 @@ const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper')
 const ServerTestHelper = require('../../../../tests/ServerTestHelper')
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper')
-const CommentRepliesTableTestHelper = require('../../../../tests/CommentRepliesTableTestHelper')
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper')
 const container = require('../../container')
 const createServer = require('../createServer')
 
@@ -14,7 +14,7 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
     afterEach(async () => {
         await CommentsTableTestHelper.cleanTable()
         await ThreadsTableTestHelper.cleanTable()
-        await CommentRepliesTableTestHelper.cleanTable()
+        await RepliesTableTestHelper.cleanTable()
     })
 
     afterAll(async () => {
@@ -129,6 +129,120 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
             const responseJson = JSON.parse(response.payload)
             expect(response.statusCode).toEqual(400)
             expect(responseJson.status).toEqual('fail')
+        })
+    })
+
+    describe('when DELETE /threads/{threadId}/comments/{commentId}/replies/{replyId}', () => {
+        it('should response 404 when trying to delete reply where thread is not available', async () => {
+            // Arrange
+            const threadId = 'thread-666'
+            const commentId = 'comment-123'
+            const replyId = 'reply-123'
+
+            const server = await createServer(container)
+
+            await ThreadsTableTestHelper.addThread({}) // Add a default thread
+            await CommentsTableTestHelper.addComment({}) // Add a default comment
+            await RepliesTableTestHelper.addReply({}) // Add a default reply
+
+            const accessToken = await ServerTestHelper.getAccessToken()
+
+            // Action
+            const response = await server.inject({
+                url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(404)
+            expect(responseJson.status).toEqual('fail')
+        })
+        it('should response 404 when trying to delete reply where comment is not available', async () => {
+            // Arrange
+            const threadId = 'thread-123'
+            const commentId = 'comment-666'
+            const replyId = 'reply-123'
+
+            const server = await createServer(container)
+
+            await ThreadsTableTestHelper.addThread({}) // Add a default thread
+            await CommentsTableTestHelper.addComment({}) // Add a default comment
+            await RepliesTableTestHelper.addReply({}) // Add a default reply
+
+            const accessToken = await ServerTestHelper.getAccessToken()
+
+            // Action
+            const response = await server.inject({
+                url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(404)
+            expect(responseJson.status).toEqual('fail')
+        })
+        it('should response 404 when trying to delete reply where reply is not available', async () => {
+            // Arrange
+            const threadId = 'thread-123'
+            const commentId = 'comment-123'
+            const replyId = 'reply-123'
+
+            const server = await createServer(container)
+
+            await ThreadsTableTestHelper.addThread({}) // Add a default thread
+            await CommentsTableTestHelper.addComment({}) // Add a default comment
+
+            const accessToken = await ServerTestHelper.getAccessToken()
+
+            // Action
+            const response = await server.inject({
+                url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(404)
+            expect(responseJson.status).toEqual('fail')
+        })
+        it('should response 200 when success deleted reply', async () => {
+            // Arrange
+            const threadId = 'thread-123'
+            const commentId = 'comment-123'
+            const replyId = 'reply-123'
+
+            await ThreadsTableTestHelper.addThread({})
+            await CommentsTableTestHelper.addComment({})
+            await RepliesTableTestHelper.addReply({})
+
+            const server = await createServer(container)
+
+            const accessToken = await ServerTestHelper.getAccessToken()
+
+            // Action
+            const response = await server.inject({
+                method: 'DELETE',
+                url: `/threads/${threadId}/comments/${commentId}/replies/${replyId}`,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(200)
+            expect(responseJson.status).toEqual('success')
         })
     })
 })

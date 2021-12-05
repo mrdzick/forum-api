@@ -1,10 +1,12 @@
-const AddCommentReplyUseCase = require('../../../../Applications/use_case/AddCommentReplyUseCase')
+const AddCommentReplyUseCase = require('../../../../Applications/use_case/AddReplyUseCase')
+const DeleteReplyUseCase = require('../../../../Applications/use_case/DeleteReplyUseCase')
 
-class RepliesHandler {
+class ReplyHandler {
     constructor (container) {
         this._container = container
 
         this.postReplyToComment = this.postReplyToComment.bind(this)
+        this.deleteReplyFromComment = this.deleteReplyFromComment.bind(this)
     }
 
     async postReplyToComment ({ payload, params, auth }, h) {
@@ -25,6 +27,22 @@ class RepliesHandler {
         response.code(201)
         return response
     }
+
+    async deleteReplyFromComment ({ params, auth }, h) {
+        const deleteReplyUseCase = this._container.getInstance(DeleteReplyUseCase.name)
+        const { threadId, commentId, replyId } = params
+        const { id: credentialId } = auth.credentials
+
+        const payloadToSend = { id: replyId, comment: commentId, thread: threadId, owner: credentialId }
+
+        await deleteReplyUseCase.execute(payloadToSend)
+
+        const response = h.response({
+            status: 'success'
+        })
+        response.code(200)
+        return response
+    }
 }
 
-module.exports = RepliesHandler
+module.exports = ReplyHandler

@@ -1,3 +1,4 @@
+const ReplyRepository = require('../../../Domains/replies/ReplyRepository')
 const CommentRepository = require('../../../Domains/comments/CommentRepository')
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository')
 const GetThreadUseCase = require('../GetThreadUseCase')
@@ -20,7 +21,19 @@ describe('GetThreadUseCase', () => {
                 id: 'comment-123',
                 username: 'mrdzick',
                 date: '20211010',
-                content: 'ini konten'
+                content: 'ini konten',
+                is_deleted: false
+            }
+        ]
+
+        const replies = [
+            {
+                id: 'reply-123',
+                content: 'ini balasan komentar',
+                date: '20211110',
+                username: 'johndoe',
+                comment: 'comment-123',
+                is_deleted: false
             }
         ]
 
@@ -35,6 +48,14 @@ describe('GetThreadUseCase', () => {
                     id: 'comment-123',
                     username: 'mrdzick',
                     date: '20211010',
+                    replies: [
+                        {
+                            id: 'reply-123',
+                            content: 'ini balasan komentar',
+                            date: '20211110',
+                            username: 'johndoe'
+                        }
+                    ],
                     content: 'ini konten'
                 }
             ]
@@ -42,6 +63,7 @@ describe('GetThreadUseCase', () => {
 
         const mockThreadRepository = new ThreadRepository()
         const mockCommentRepository = new CommentRepository()
+        const mockReplyRepository = new ReplyRepository()
 
         mockThreadRepository.verifyAvailableThread = jest.fn()
             .mockImplementation(() => Promise.resolve())
@@ -49,15 +71,17 @@ describe('GetThreadUseCase', () => {
             .mockImplementation(() => Promise.resolve(thread))
         mockCommentRepository.getAllCommentsInThread = jest.fn()
             .mockImplementation(() => Promise.resolve(comments))
+        mockReplyRepository.getAllReplies = jest.fn()
+            .mockImplementation(() => Promise.resolve(replies))
 
         const getThreadUseCase = new GetThreadUseCase({
             threadRepository: mockThreadRepository,
-            commentRepository: mockCommentRepository
+            commentRepository: mockCommentRepository,
+            replyRepository: mockReplyRepository
         })
 
         // Action
         const actualGetThread = await getThreadUseCase.execute(useCasePayload)
-
         // Assert
         expect(actualGetThread).toEqual(expectedThread)
         expect(mockThreadRepository.verifyAvailableThread)
@@ -65,6 +89,8 @@ describe('GetThreadUseCase', () => {
         expect(mockThreadRepository.getThreadById)
             .toHaveBeenCalledWith(useCasePayload.threadId)
         expect(mockCommentRepository.getAllCommentsInThread)
+            .toHaveBeenCalledWith(useCasePayload.threadId)
+        expect(mockReplyRepository.getAllReplies)
             .toHaveBeenCalledWith(useCasePayload.threadId)
     })
     it('should return comments with content=**komentar telah dihapus** when comments has been deleted', async () => {
@@ -89,6 +115,17 @@ describe('GetThreadUseCase', () => {
             }
         ]
 
+        const replies = [
+            {
+                id: 'reply-123',
+                content: 'ini balasan komentar',
+                date: '20211110',
+                username: 'johndoe',
+                comment: 'comment-123',
+                is_deleted: true
+            }
+        ]
+
         const expectedThread = {
             id: 'thread-123',
             title: 'ini title thread',
@@ -100,6 +137,14 @@ describe('GetThreadUseCase', () => {
                     id: 'comment-123',
                     username: 'mrdzick',
                     date: '20211010',
+                    replies: [
+                        {
+                            id: 'reply-123',
+                            content: '**komentar telah dihapus**',
+                            date: '20211110',
+                            username: 'johndoe'
+                        }
+                    ],
                     content: '**komentar telah dihapus**'
                 }
             ]
@@ -107,6 +152,7 @@ describe('GetThreadUseCase', () => {
 
         const mockThreadRepository = new ThreadRepository()
         const mockCommentRepository = new CommentRepository()
+        const mockReplyRepository = new ReplyRepository()
 
         mockThreadRepository.verifyAvailableThread = jest.fn()
             .mockImplementation(() => Promise.resolve())
@@ -114,10 +160,13 @@ describe('GetThreadUseCase', () => {
             .mockImplementation(() => Promise.resolve(thread))
         mockCommentRepository.getAllCommentsInThread = jest.fn()
             .mockImplementation(() => Promise.resolve(comments))
+        mockReplyRepository.getAllReplies = jest.fn()
+            .mockImplementation(() => Promise.resolve(replies))
 
         const getThreadUseCase = new GetThreadUseCase({
             threadRepository: mockThreadRepository,
-            commentRepository: mockCommentRepository
+            commentRepository: mockCommentRepository,
+            replyRepository: mockReplyRepository
         })
 
         // Action
