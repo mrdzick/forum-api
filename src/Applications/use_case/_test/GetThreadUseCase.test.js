@@ -140,7 +140,7 @@ describe('GetThreadUseCase', () => {
                     replies: [
                         {
                             id: 'reply-123',
-                            content: '**komentar telah dihapus**',
+                            content: '**balasan telah dihapus**',
                             date: '20211110',
                             username: 'johndoe'
                         }
