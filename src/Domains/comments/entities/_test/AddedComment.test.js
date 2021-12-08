@@ -1,4 +1,4 @@
-const AddedComment = require('../addedComment')
+const AddedComment = require('../AddedComment')
 
 describe('AddedComment entities', () => {
     it('should throw error when payload did not contain needed property', () => {
@@ -20,7 +20,7 @@ describe('AddedComment entities', () => {
         expect(() => new AddedComment(payload)).toThrowError('ADDED_COMMENT.DATA_TYPES_OF_PAYLOAD_IS_NOT_VALID')
     })
 
-    it('should create addedThread object correctly', () => {
+    it('should create addedComment object correctly', () => {
         const payload = {
             id: 'comment-123',
             content: 'sebuah komentar',
