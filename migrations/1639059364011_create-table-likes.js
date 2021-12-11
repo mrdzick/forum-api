@@ -1,19 +1,15 @@
 exports.up = pgm => {
-    pgm.createTable('replies', {
+    pgm.createTable('likes', {
         id: {
             type: 'VARCHAR(50)',
-            primaryKey: true,
-            notNull: true
-        },
-        content: {
-            type: 'TEXT',
-            notNull: true
+            notNull: true,
+            primaryKey: true
         },
         owner: {
             type: 'VARCHAR(50)',
             notNull: true,
             references: 'users',
-            referencesConstraintName: 'fk_replies_users',
+            referencesConstraintName: 'fk_likes_users',
             onDelete: 'cascade',
             onUpdate: 'cascade'
         },
@@ -21,17 +17,13 @@ exports.up = pgm => {
             type: 'VARCHAR(50)',
             notNull: true,
             references: 'comments',
-            referencesConstraintName: 'fk_replies_comments',
+            referencesConstraintName: 'fk_likes_comments',
             onDelete: 'cascade',
             onUpdate: 'cascade'
         },
         date: {
             type: 'TIMESTAMP',
             default: 'NOW()'
-        },
-        is_deleted: {
-            type: 'BOOLEAN',
-            default: 'FALSE'
         }
     }, {
         ifNotExists: true
@@ -39,8 +31,8 @@ exports.up = pgm => {
 }
 
 exports.down = pgm => {
-    pgm.dropTable('comment-replies', {
+    pgm.dropTable('likes', {
         ifExists: true,
-        cascade: true
+        cascase: true
     })
 }
