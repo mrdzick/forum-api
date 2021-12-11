@@ -7,5 +7,6 @@ describe('LikeRepository Interface', () => {
         await expect(likeRepository.like({})).rejects.toThrowError('COMMENT_LIKES_REPOSITORY.METHOD_NOT_IMPLEMENTED')
         await expect(likeRepository.unlike({})).rejects.toThrowError('COMMENT_LIKES_REPOSITORY.METHOD_NOT_IMPLEMENTED')
         await expect(likeRepository.verifyLikeStatus({})).rejects.toThrowError('COMMENT_LIKES_REPOSITORY.METHOD_NOT_IMPLEMENTED')
+        await expect(likeRepository.getAllLikes({})).rejects.toThrowError('COMMENT_LIKES_REPOSITORY.METHOD_NOT_IMPLEMENTED')
     })
 })

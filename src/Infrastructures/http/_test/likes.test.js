@@ -44,5 +44,24 @@ describe('/threads/{threadId}/comments/{commentId}/replies endpoint', () => {
             expect(response.statusCode).toEqual(200)
             expect(responseJson.status).toEqual('success')
         })
+        it('should response 404 when trying to like a comment that is not available', async () => {
+            // Assert
+            const server = await createServer(container)
+
+            const accessToken = await ServerTestHelper.getAccessToken()
+            // Action
+            const response = await server.inject({
+                url: '/threads/thread-123/comments/comment-123/likes',
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+            // Assert
+            const responseJson = JSON.parse(response.payload)
+            expect(response.statusCode).toEqual(404)
+            expect(responseJson.status).toEqual('fail')
+        })
     })
 })

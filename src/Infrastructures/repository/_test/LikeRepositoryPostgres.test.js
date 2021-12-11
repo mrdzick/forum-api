@@ -94,4 +94,28 @@ describe('LikeRepositoryPostgres', () => {
             expect(reply).toHaveLength(0)
         })
     })
+
+    describe('getAll function', () => {
+        it('should return all comments correctly', async () => {
+            // Assert
+            const commentId = 'comment-123'
+            const expectedResult = [{
+                id: 'like-123',
+                owner: 'user-123',
+                comment: 'comment-123'
+            }]
+            const likeRepositoryPostgres = new LikeRepositoryPostgres(pool, {})
+
+            await LikesTableTestHelper.addLike({}) // add default comment
+
+            // Action
+            const result = await likeRepositoryPostgres.getAllLikes(commentId)
+
+            // Assert
+            expect(result[0].id).toEqual(expectedResult[0].id)
+            expect(result[0].owner).toEqual(expectedResult[0].owner)
+            expect(result[0].comment).toEqual(expectedResult[0].comment)
+            expect(result[0]).toHaveProperty('date')
+        })
+    })
 })

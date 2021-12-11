@@ -137,7 +137,7 @@ describe('ReplyRepositoryPostgres', () => {
     describe('getAllReplies function', () => {
         it('should return all replies correctly', async () => {
             // Assert
-            const threadId = 'thread-123'
+            const commentId = 'comment-123'
             const expectedResult = {
                 id: 'reply-123',
                 content: 'ini adalah isi balasan komentar',
@@ -152,7 +152,7 @@ describe('ReplyRepositoryPostgres', () => {
             await RepliesTableTestHelper.addReply({}) // add default reply
 
             // Action
-            const result = await replyRepositoryPostgres.getAllReplies(threadId)
+            const result = await replyRepositoryPostgres.getAllReplies(commentId)
 
             // Assert
             expect(result[0].id).toEqual(expectedResult.id)

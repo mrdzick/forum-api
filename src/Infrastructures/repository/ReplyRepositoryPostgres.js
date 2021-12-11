@@ -60,11 +60,11 @@ class ReplyRepositoryPostgres extends ReplyRepository {
         await this._pool.query(query)
     }
 
-    async getAllReplies (threadId) {
+    async getAllReplies (commentId) {
         const query = {
             text: `SELECT replies.id, replies.content, users.username, replies.comment, replies.date, replies.is_deleted FROM replies
-                    LEFT JOIN users ON users.id=replies.owner WHERE replies.thread=$1 ORDER BY replies.date ASC`,
-            values: [threadId]
+                    LEFT JOIN users ON users.id=replies.owner WHERE replies.comment=$1 ORDER BY replies.date ASC`,
+            values: [commentId]
         }
 
         const result = await this._pool.query(query)

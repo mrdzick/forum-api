@@ -41,6 +41,16 @@ class LikeRepositoryPostgres extends LikeRepository {
 
         await this._pool.query(query)
     }
+
+    async getAllLikes (commentId) {
+        const query = {
+            text: 'SELECT * FROM likes WHERE comment=$1',
+            values: [commentId]
+        }
+
+        const result = await this._pool.query(query)
+        return result.rows
+    }
 }
 
 module.exports = LikeRepositoryPostgres
