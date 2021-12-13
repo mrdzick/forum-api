@@ -33,8 +33,7 @@ describe('ReplyRepositoryPostgres', () => {
             const reply = new AddReply({
                 content: 'ini isi balasan komentar',
                 owner: 'user-123',
-                comment: 'comment-123',
-                thread: 'thread-123'
+                comment: 'comment-123'
             })
 
             const fakeIdGenerator = () => '123' // stub
@@ -53,8 +52,7 @@ describe('ReplyRepositoryPostgres', () => {
             const reply = new AddReply({
                 content: 'ini isi balasan komentar',
                 owner: 'user-123',
-                comment: 'comment-123',
-                thread: 'thread-123'
+                comment: 'comment-123'
             })
 
             const fakeIdGenerator = () => '123' // Stub

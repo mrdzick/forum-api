@@ -39,7 +39,7 @@ exports.up = pgm => {
 }
 
 exports.down = pgm => {
-    pgm.dropTable('comment-replies', {
+    pgm.dropTable('replies', {
         ifExists: true,
         cascade: true
     })
