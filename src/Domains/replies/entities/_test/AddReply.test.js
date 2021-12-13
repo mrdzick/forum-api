@@ -14,8 +14,7 @@ describe('AddReply entities', () => {
         const payload = {
             content: true,
             owner: 123,
-            comment: 'comment-123',
-            thread: 'thread-123'
+            comment: 'comment-123'
         }
 
         // Action and Assert
@@ -26,15 +25,13 @@ describe('AddReply entities', () => {
         const payload = {
             content: 'ini isi komentar',
             owner: 'user-123',
-            comment: 'comment-123',
-            thread: 'thread-123'
+            comment: 'comment-123'
         }
 
-        const { content, owner, comment, thread } = new AddReply(payload)
+        const { content, owner, comment } = new AddReply(payload)
 
         expect(content).toEqual(payload.content)
         expect(owner).toEqual(payload.owner)
         expect(comment).toEqual(payload.comment)
-        expect(thread).toEqual(payload.thread)
     })
 })
